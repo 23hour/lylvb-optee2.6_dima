@@ -1,0 +1,5 @@
+2021-09-06T02:02:21Z|00001|vlog|INFO|opened log file /home/zhangxiang/opvswitch/openvswitch-2.5.10/tests/testsuite.dir/0024/ovs-vswitchd.log
+2021-09-06T02:02:21Z|00002|ovs_numa|INFO|Discovered 2 CPU cores on NUMA node 0
+2021-09-06T02:02:21Z|00003|ovs_numa|INFO|Discovered 1 NUMA nodes and 2 CPU cores
+2021-09-06T02:02:21Z|00004|reconnect|INFO|unix:/home/zhangxiang/opvswitch/openvswitch-2.5.10/tests/testsuite.dir/0024/db.sock: connecting...
+2021-09-06T02:02:21Z|00005|reconnect|INFO|unix:/home/zhangxiang/opvswitch/openvswitch-2.5.10/tests/testsuite.dir/0024/db.sock: connected

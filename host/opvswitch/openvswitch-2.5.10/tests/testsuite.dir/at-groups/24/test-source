@@ -1,0 +1,406 @@
+at_fn_group_banner 24 'cfm.at:112' \
+  "cfm - demand mode" "                              " 4
+at_xfail=no
+(
+  $as_echo "24. $at_setup_line: testing $at_desc ..."
+  $at_traceon
+
+ovs_init
+
+#Create 2 bridges connected by patch ports and enable cfm
+   touch .conf.db.~lock~
+   { set +x
+$as_echo "$at_srcdir/cfm.at:114: ovsdb-tool create conf.db \$abs_top_srcdir/vswitchd/vswitch.ovsschema"
+at_fn_check_prepare_dynamic "ovsdb-tool create conf.db $abs_top_srcdir/vswitchd/vswitch.ovsschema" "cfm.at:114"
+( $at_check_trace; ovsdb-tool create conf.db $abs_top_srcdir/vswitchd/vswitch.ovsschema
+) >>"$at_stdout" 2>>"$at_stderr" 5>&-
+at_status=$? at_failed=false
+$at_check_filter
+at_fn_diff_devnull "$at_stderr" || at_failed=:
+at_fn_diff_devnull "$at_stdout" || at_failed=:
+at_fn_check_status 0 $at_status "$at_srcdir/cfm.at:114"
+$at_failed && at_fn_log_failure
+$at_traceon; }
+
+
+      { set +x
+$as_echo "$at_srcdir/cfm.at:114: ovsdb-server --detach --no-chdir --pidfile --log-file --remote=punix:\$OVS_RUNDIR/db.sock"
+at_fn_check_prepare_dynamic "ovsdb-server --detach --no-chdir --pidfile --log-file --remote=punix:$OVS_RUNDIR/db.sock" "cfm.at:114"
+( $at_check_trace; ovsdb-server --detach --no-chdir --pidfile --log-file --remote=punix:$OVS_RUNDIR/db.sock
+) >>"$at_stdout" 2>>"$at_stderr" 5>&-
+at_status=$? at_failed=false
+$at_check_filter
+echo stderr:; tee stderr <"$at_stderr"
+at_fn_diff_devnull "$at_stdout" || at_failed=:
+at_fn_check_status 0 $at_status "$at_srcdir/cfm.at:114"
+$at_failed && at_fn_log_failure
+$at_traceon; }
+
+   on_exit "kill `cat ovsdb-server.pid`"
+   { set +x
+$as_echo "$at_srcdir/cfm.at:114: sed < stderr '
+/vlog|INFO|opened log file/d
+/ovsdb_server|INFO|ovsdb-server (Open vSwitch)/d'"
+at_fn_check_prepare_notrace 'an embedded newline' "cfm.at:114"
+( $at_check_trace; sed < stderr '
+/vlog|INFO|opened log file/d
+/ovsdb_server|INFO|ovsdb-server (Open vSwitch)/d'
+) >>"$at_stdout" 2>>"$at_stderr" 5>&-
+at_status=$? at_failed=false
+$at_check_filter
+at_fn_diff_devnull "$at_stderr" || at_failed=:
+at_fn_diff_devnull "$at_stdout" || at_failed=:
+at_fn_check_status 0 $at_status "$at_srcdir/cfm.at:114"
+$at_failed && at_fn_log_failure
+$at_traceon; }
+
+
+
+      { set +x
+$as_echo "$at_srcdir/cfm.at:114: ovs-vsctl --no-wait init"
+at_fn_check_prepare_trace "cfm.at:114"
+( $at_check_trace; ovs-vsctl --no-wait init
+) >>"$at_stdout" 2>>"$at_stderr" 5>&-
+at_status=$? at_failed=false
+$at_check_filter
+at_fn_diff_devnull "$at_stderr" || at_failed=:
+at_fn_diff_devnull "$at_stdout" || at_failed=:
+at_fn_check_status 0 $at_status "$at_srcdir/cfm.at:114"
+$at_failed && at_fn_log_failure  \
+"ovsdb-server.log"
+$at_traceon; }
+
+
+      { set +x
+$as_echo "$at_srcdir/cfm.at:114: ovs-vswitchd --enable-dummy --disable-system --detach --no-chdir --pidfile --log-file -vvconn -vofproto_dpif"
+at_fn_check_prepare_trace "cfm.at:114"
+( $at_check_trace; ovs-vswitchd --enable-dummy --disable-system --detach --no-chdir --pidfile --log-file -vvconn -vofproto_dpif
+) >>"$at_stdout" 2>>"$at_stderr" 5>&-
+at_status=$? at_failed=false
+$at_check_filter
+echo stderr:; tee stderr <"$at_stderr"
+at_fn_diff_devnull "$at_stdout" || at_failed=:
+at_fn_check_status 0 $at_status "$at_srcdir/cfm.at:114"
+$at_failed && at_fn_log_failure  \
+"ovsdb-server.log"
+$at_traceon; }
+
+
+   on_exit "kill `cat ovs-vswitchd.pid`"
+   { set +x
+$as_echo "$at_srcdir/cfm.at:114: sed < stderr '
+/ovs_numa|INFO|Discovered /d
+/vlog|INFO|opened log file/d
+/vswitchd|INFO|ovs-vswitchd (Open vSwitch)/d
+/reconnect|INFO|/d
+/ofproto|INFO|using datapath ID/d
+/netdev_linux|INFO|.*device has unknown hardware address family/d
+/ofproto|INFO|datapath ID changed to fedcba9876543210/d'"
+at_fn_check_prepare_notrace 'an embedded newline' "cfm.at:114"
+( $at_check_trace; sed < stderr '
+/ovs_numa|INFO|Discovered /d
+/vlog|INFO|opened log file/d
+/vswitchd|INFO|ovs-vswitchd (Open vSwitch)/d
+/reconnect|INFO|/d
+/ofproto|INFO|using datapath ID/d
+/netdev_linux|INFO|.*device has unknown hardware address family/d
+/ofproto|INFO|datapath ID changed to fedcba9876543210/d'
+) >>"$at_stdout" 2>>"$at_stderr" 5>&-
+at_status=$? at_failed=false
+$at_check_filter
+at_fn_diff_devnull "$at_stderr" || at_failed=:
+at_fn_diff_devnull "$at_stdout" || at_failed=:
+at_fn_check_status 0 $at_status "$at_srcdir/cfm.at:114"
+$at_failed && at_fn_log_failure  \
+"ovsdb-server.log" \
+"ovs-vswitchd.log"
+$at_traceon; }
+
+
+
+      { set +x
+$as_echo "$at_srcdir/cfm.at:114: ovs-vsctl -- add-br br0 -- set bridge br0 datapath-type=dummy other-config:datapath-id=fedcba9876543210 other-config:hwaddr=aa:55:aa:55:00:00 protocols=[OpenFlow10,OpenFlow11,OpenFlow12,OpenFlow13,OpenFlow14,OpenFlow15] fail-mode=secure -- add-br br1 -- \\
+                    set bridge br1 datapath-type=dummy \\
+                    other-config:hwaddr=aa:55:aa:56:00:00 -- \\
+                    add-port br1 p1 -- set Interface p1 type=patch \\
+                    options:peer=p0 -- \\
+                    add-port br0 p0 -- set Interface p0 type=patch \\
+                    options:peer=p1 -- \\
+                    set Interface p0 cfm_mpid=1 other_config:cfm_interval=300 other_config:cfm_extended=true -- \\
+                    set Interface p1 cfm_mpid=2 other_config:cfm_interval=300 other_config:cfm_extended=true  "
+at_fn_check_prepare_notrace 'an embedded newline' "cfm.at:114"
+( $at_check_trace; ovs-vsctl -- add-br br0 -- set bridge br0 datapath-type=dummy other-config:datapath-id=fedcba9876543210 other-config:hwaddr=aa:55:aa:55:00:00 protocols=[OpenFlow10,OpenFlow11,OpenFlow12,OpenFlow13,OpenFlow14,OpenFlow15] fail-mode=secure -- add-br br1 -- \
+                    set bridge br1 datapath-type=dummy \
+                    other-config:hwaddr=aa:55:aa:56:00:00 -- \
+                    add-port br1 p1 -- set Interface p1 type=patch \
+                    options:peer=p0 -- \
+                    add-port br0 p0 -- set Interface p0 type=patch \
+                    options:peer=p1 -- \
+                    set Interface p0 cfm_mpid=1 other_config:cfm_interval=300 other_config:cfm_extended=true -- \
+                    set Interface p1 cfm_mpid=2 other_config:cfm_interval=300 other_config:cfm_extended=true
+) >>"$at_stdout" 2>>"$at_stderr" 5>&-
+at_status=$? at_failed=false
+$at_check_filter
+at_fn_diff_devnull "$at_stderr" || at_failed=:
+at_fn_diff_devnull "$at_stdout" || at_failed=:
+at_fn_check_status 0 $at_status "$at_srcdir/cfm.at:114"
+$at_failed && at_fn_log_failure  \
+"ovsdb-server.log" \
+"ovs-vswitchd.log"
+$at_traceon; }
+
+
+
+ovs-appctl time/stop
+# wait for a while to stablize cfm.
+ovs-appctl time/warp 10100 100
+
+{ set +x
+$as_echo "$at_srcdir/cfm.at:127: ovs-appctl cfm/show p0 | sed -e '/next CCM tx:/d' | sed -e '/next fault check:/d' | sed -e  '/recv since check:/d'"
+at_fn_check_prepare_notrace 'a shell pipeline' "cfm.at:127"
+( $at_check_trace; ovs-appctl cfm/show p0 | sed -e '/next CCM tx:/d' | sed -e '/next fault check:/d' | sed -e  '/recv since check:/d'
+) >>"$at_stdout" 2>>"$at_stderr" 5>&-
+at_status=$? at_failed=false
+$at_check_filter
+at_fn_diff_devnull "$at_stderr" || at_failed=:
+echo >>"$at_stdout"; $as_echo "---- p0 ----
+MPID 1: extended
+	average health: 100
+	opstate: up
+	remote_opstate: up
+	interval: 300ms
+Remote MPID 2
+	opstate: up
+" | \
+  $at_diff - "$at_stdout" || at_failed=:
+at_fn_check_status 0 $at_status "$at_srcdir/cfm.at:127"
+$at_failed && at_fn_log_failure  \
+"ovsdb-server.log" \
+"ovs-vswitchd.log"
+$at_traceon; }
+
+
+
+{ set +x
+$as_echo "$at_srcdir/cfm.at:128: ovs-appctl cfm/show p1 | sed -e '/next CCM tx:/d' | sed -e '/next fault check:/d' | sed -e  '/recv since check:/d'"
+at_fn_check_prepare_notrace 'a shell pipeline' "cfm.at:128"
+( $at_check_trace; ovs-appctl cfm/show p1 | sed -e '/next CCM tx:/d' | sed -e '/next fault check:/d' | sed -e  '/recv since check:/d'
+) >>"$at_stdout" 2>>"$at_stderr" 5>&-
+at_status=$? at_failed=false
+$at_check_filter
+at_fn_diff_devnull "$at_stderr" || at_failed=:
+echo >>"$at_stdout"; $as_echo "---- p1 ----
+MPID 2: extended
+	average health: 100
+	opstate: up
+	remote_opstate: up
+	interval: 300ms
+Remote MPID 1
+	opstate: up
+" | \
+  $at_diff - "$at_stdout" || at_failed=:
+at_fn_check_status 0 $at_status "$at_srcdir/cfm.at:128"
+$at_failed && at_fn_log_failure  \
+"ovsdb-server.log" \
+"ovs-vswitchd.log"
+$at_traceon; }
+
+
+
+# turn on demand mode on one end.
+{ set +x
+$as_echo "$at_srcdir/cfm.at:131: ovs-vsctl set interface p0 other_config:cfm_demand=true"
+at_fn_check_prepare_trace "cfm.at:131"
+( $at_check_trace; ovs-vsctl set interface p0 other_config:cfm_demand=true
+) >>"$at_stdout" 2>>"$at_stderr" 5>&-
+at_status=$? at_failed=false
+$at_check_filter
+at_fn_diff_devnull "$at_stderr" || at_failed=:
+at_fn_diff_devnull "$at_stdout" || at_failed=:
+at_fn_check_status 0 $at_status "$at_srcdir/cfm.at:131"
+$at_failed && at_fn_log_failure  \
+"ovsdb-server.log" \
+"ovs-vswitchd.log"
+$at_traceon; }
+
+
+# cfm should never go down.
+for i in `seq 0 100`
+do
+    ovs-appctl time/warp 100
+
+{ set +x
+$as_echo "$at_srcdir/cfm.at:137: ovs-appctl cfm/show p0 | sed -e '/next CCM tx:/d' | sed -e '/next fault check:/d' | sed -e  '/recv since check:/d'"
+at_fn_check_prepare_notrace 'a shell pipeline' "cfm.at:137"
+( $at_check_trace; ovs-appctl cfm/show p0 | sed -e '/next CCM tx:/d' | sed -e '/next fault check:/d' | sed -e  '/recv since check:/d'
+) >>"$at_stdout" 2>>"$at_stderr" 5>&-
+at_status=$? at_failed=false
+$at_check_filter
+at_fn_diff_devnull "$at_stderr" || at_failed=:
+echo >>"$at_stdout"; $as_echo "---- p0 ----
+MPID 1: extended
+	average health: 100
+	opstate: up
+	remote_opstate: up
+	interval: 300ms
+Remote MPID 2
+	opstate: up
+" | \
+  $at_diff - "$at_stdout" || at_failed=:
+at_fn_check_status 0 $at_status "$at_srcdir/cfm.at:137"
+$at_failed && at_fn_log_failure  \
+"ovsdb-server.log" \
+"ovs-vswitchd.log"
+$at_traceon; }
+
+
+
+{ set +x
+$as_echo "$at_srcdir/cfm.at:138: ovs-appctl cfm/show p1 | sed -e '/next CCM tx:/d' | sed -e '/next fault check:/d' | sed -e  '/recv since check:/d'"
+at_fn_check_prepare_notrace 'a shell pipeline' "cfm.at:138"
+( $at_check_trace; ovs-appctl cfm/show p1 | sed -e '/next CCM tx:/d' | sed -e '/next fault check:/d' | sed -e  '/recv since check:/d'
+) >>"$at_stdout" 2>>"$at_stderr" 5>&-
+at_status=$? at_failed=false
+$at_check_filter
+at_fn_diff_devnull "$at_stderr" || at_failed=:
+echo >>"$at_stdout"; $as_echo "---- p1 ----
+MPID 2: extended
+	average health: 100
+	opstate: up
+	remote_opstate: up
+	interval: 300ms
+Remote MPID 1
+	opstate: up
+" | \
+  $at_diff - "$at_stdout" || at_failed=:
+at_fn_check_status 0 $at_status "$at_srcdir/cfm.at:138"
+$at_failed && at_fn_log_failure  \
+"ovsdb-server.log" \
+"ovs-vswitchd.log"
+$at_traceon; }
+
+
+done
+
+# turn on demand mode on the other end.
+{ set +x
+$as_echo "$at_srcdir/cfm.at:142: ovs-vsctl set interface p1 other_config:cfm_demand=true"
+at_fn_check_prepare_trace "cfm.at:142"
+( $at_check_trace; ovs-vsctl set interface p1 other_config:cfm_demand=true
+) >>"$at_stdout" 2>>"$at_stderr" 5>&-
+at_status=$? at_failed=false
+$at_check_filter
+at_fn_diff_devnull "$at_stderr" || at_failed=:
+at_fn_diff_devnull "$at_stdout" || at_failed=:
+at_fn_check_status 0 $at_status "$at_srcdir/cfm.at:142"
+$at_failed && at_fn_log_failure  \
+"ovsdb-server.log" \
+"ovs-vswitchd.log"
+$at_traceon; }
+
+for i in `seq 0 100`
+do
+    ovs-appctl time/warp 100
+
+{ set +x
+$as_echo "$at_srcdir/cfm.at:146: ovs-appctl cfm/show p0 | sed -e '/next CCM tx:/d' | sed -e '/next fault check:/d' | sed -e  '/recv since check:/d'"
+at_fn_check_prepare_notrace 'a shell pipeline' "cfm.at:146"
+( $at_check_trace; ovs-appctl cfm/show p0 | sed -e '/next CCM tx:/d' | sed -e '/next fault check:/d' | sed -e  '/recv since check:/d'
+) >>"$at_stdout" 2>>"$at_stderr" 5>&-
+at_status=$? at_failed=false
+$at_check_filter
+at_fn_diff_devnull "$at_stderr" || at_failed=:
+echo >>"$at_stdout"; $as_echo "---- p0 ----
+MPID 1: extended
+	average health: 100
+	opstate: up
+	remote_opstate: up
+	interval: 300ms
+Remote MPID 2
+	opstate: up
+" | \
+  $at_diff - "$at_stdout" || at_failed=:
+at_fn_check_status 0 $at_status "$at_srcdir/cfm.at:146"
+$at_failed && at_fn_log_failure  \
+"ovsdb-server.log" \
+"ovs-vswitchd.log"
+$at_traceon; }
+
+
+
+{ set +x
+$as_echo "$at_srcdir/cfm.at:147: ovs-appctl cfm/show p1 | sed -e '/next CCM tx:/d' | sed -e '/next fault check:/d' | sed -e  '/recv since check:/d'"
+at_fn_check_prepare_notrace 'a shell pipeline' "cfm.at:147"
+( $at_check_trace; ovs-appctl cfm/show p1 | sed -e '/next CCM tx:/d' | sed -e '/next fault check:/d' | sed -e  '/recv since check:/d'
+) >>"$at_stdout" 2>>"$at_stderr" 5>&-
+at_status=$? at_failed=false
+$at_check_filter
+at_fn_diff_devnull "$at_stderr" || at_failed=:
+echo >>"$at_stdout"; $as_echo "---- p1 ----
+MPID 2: extended
+	average health: 100
+	opstate: up
+	remote_opstate: up
+	interval: 300ms
+Remote MPID 1
+	opstate: up
+" | \
+  $at_diff - "$at_stdout" || at_failed=:
+at_fn_check_status 0 $at_status "$at_srcdir/cfm.at:147"
+$at_failed && at_fn_log_failure  \
+"ovsdb-server.log" \
+"ovs-vswitchd.log"
+$at_traceon; }
+
+
+done
+
+{ set +x
+$as_echo "$at_srcdir/cfm.at:150: check_logs "
+at_fn_check_prepare_trace "cfm.at:150"
+( $at_check_trace; check_logs
+) >>"$at_stdout" 2>>"$at_stderr" 5>&-
+at_status=$? at_failed=false
+$at_check_filter
+at_fn_diff_devnull "$at_stderr" || at_failed=:
+at_fn_diff_devnull "$at_stdout" || at_failed=:
+at_fn_check_status 0 $at_status "$at_srcdir/cfm.at:150"
+$at_failed && at_fn_log_failure  \
+"ovsdb-server.log" \
+"ovs-vswitchd.log"
+$at_traceon; }
+
+   { set +x
+$as_echo "$at_srcdir/cfm.at:150: ovs-appctl -t ovs-vswitchd exit"
+at_fn_check_prepare_trace "cfm.at:150"
+( $at_check_trace; ovs-appctl -t ovs-vswitchd exit
+) >>"$at_stdout" 2>>"$at_stderr" 5>&-
+at_status=$? at_failed=false
+$at_check_filter
+at_fn_diff_devnull "$at_stderr" || at_failed=:
+at_fn_diff_devnull "$at_stdout" || at_failed=:
+at_fn_check_status 0 $at_status "$at_srcdir/cfm.at:150"
+$at_failed && at_fn_log_failure  \
+"ovsdb-server.log" \
+"ovs-vswitchd.log"
+$at_traceon; }
+
+   { set +x
+$as_echo "$at_srcdir/cfm.at:150: ovs-appctl -t ovsdb-server exit"
+at_fn_check_prepare_trace "cfm.at:150"
+( $at_check_trace; ovs-appctl -t ovsdb-server exit
+) >>"$at_stdout" 2>>"$at_stderr" 5>&-
+at_status=$? at_failed=false
+$at_check_filter
+at_fn_diff_devnull "$at_stderr" || at_failed=:
+at_fn_diff_devnull "$at_stdout" || at_failed=:
+at_fn_check_status 0 $at_status "$at_srcdir/cfm.at:150"
+$at_failed && at_fn_log_failure  \
+"ovsdb-server.log" \
+"ovs-vswitchd.log"
+$at_traceon; }
+
+  set +x
+  $at_times_p && times >"$at_times_file"
+) 5>&1 2>&1 7>&- | eval $at_tee_pipe
+read at_status <"$at_status_file"

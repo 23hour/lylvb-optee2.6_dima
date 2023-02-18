@@ -1,0 +1,3 @@
+2021-09-06T02:02:21.514Z|00001|vlog|INFO|opened log file /home/zhangxiang/opvswitch/openvswitch-2.5.10/tests/testsuite.dir/0024/ovsdb-server.log
+2021-09-06T02:02:21.521Z|00002|ovsdb_server|INFO|ovsdb-server (Open vSwitch) 2.5.10
+2021-09-06T02:02:21.972Z|00003|fatal_signal|WARN|terminating with signal 15 (Terminated)

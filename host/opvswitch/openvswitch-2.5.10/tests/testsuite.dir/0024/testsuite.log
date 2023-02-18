@@ -1,0 +1,34 @@
+#                             -*- compilation -*-
+24. cfm.at:112: testing cfm - demand mode ...
+./cfm.at:114: ovsdb-tool create conf.db $abs_top_srcdir/vswitchd/vswitch.ovsschema
+./cfm.at:114: ovsdb-server --detach --no-chdir --pidfile --log-file --remote=punix:$OVS_RUNDIR/db.sock
+stderr:
+2021-09-06T02:02:21Z|00001|vlog|INFO|opened log file /home/zhangxiang/opvswitch/openvswitch-2.5.10/tests/testsuite.dir/0024/ovsdb-server.log
+./cfm.at:114: sed < stderr '
+/vlog|INFO|opened log file/d
+/ovsdb_server|INFO|ovsdb-server (Open vSwitch)/d'
+./cfm.at:114: ovs-vsctl --no-wait init
+./cfm.at:114: ovs-vswitchd --enable-dummy --disable-system --detach --no-chdir --pidfile --log-file -vvconn -vofproto_dpif
+stderr:
+2021-09-06T02:02:21Z|00001|vlog|INFO|opened log file /home/zhangxiang/opvswitch/openvswitch-2.5.10/tests/testsuite.dir/0024/ovs-vswitchd.log
+2021-09-06T02:02:21Z|00002|ovs_numa|INFO|Discovered 2 CPU cores on NUMA node 0
+2021-09-06T02:02:21Z|00003|ovs_numa|INFO|Discovered 1 NUMA nodes and 2 CPU cores
+2021-09-06T02:02:21Z|00004|reconnect|INFO|unix:/home/zhangxiang/opvswitch/openvswitch-2.5.10/tests/testsuite.dir/0024/db.sock: connecting...
+2021-09-06T02:02:21Z|00005|reconnect|INFO|unix:/home/zhangxiang/opvswitch/openvswitch-2.5.10/tests/testsuite.dir/0024/db.sock: connected
+./cfm.at:114: sed < stderr '
+/ovs_numa|INFO|Discovered /d
+/vlog|INFO|opened log file/d
+/vswitchd|INFO|ovs-vswitchd (Open vSwitch)/d
+/reconnect|INFO|/d
+/ofproto|INFO|using datapath ID/d
+/netdev_linux|INFO|.*device has unknown hardware address family/d
+/ofproto|INFO|datapath ID changed to fedcba9876543210/d'
+./cfm.at:114: ovs-vsctl -- add-br br0 -- set bridge br0 datapath-type=dummy other-config:datapath-id=fedcba9876543210 other-config:hwaddr=aa:55:aa:55:00:00 protocols=[OpenFlow10,OpenFlow11,OpenFlow12,OpenFlow13,OpenFlow14,OpenFlow15] fail-mode=secure -- add-br br1 -- \
+                    set bridge br1 datapath-type=dummy \
+                    other-config:hwaddr=aa:55:aa:56:00:00 -- \
+                    add-port br1 p1 -- set Interface p1 type=patch \
+                    options:peer=p0 -- \
+                    add-port br0 p0 -- set Interface p0 type=patch \
+                    options:peer=p1 -- \
+                    set Interface p0 cfm_mpid=1 other_config:cfm_interval=300 other_config:cfm_extended=true -- \
+                    set Interface p1 cfm_mpid=2 other_config:cfm_interval=300 other_config:cfm_extended=true  

@@ -1,0 +1,9 @@
+config HACK_KERNAL_MODULE
+	tristate "HACK(HACK)"
+	select SECURITY
+	select CRYPTO_HMAC
+	select CRYPTO_MD5
+	select CRYPTO_SHA1
+	default n
+	help
+	  If you are unsure how to answer this question, answer N.

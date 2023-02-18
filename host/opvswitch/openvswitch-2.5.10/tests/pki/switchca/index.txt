@@ -1,0 +1,3 @@
+V	310904020131Z		01	unknown	/C=US/ST=CA/O=Open vSwitch/OU=switchca/CN=OVS switchca CA Certificate (2021 Sep 06 10:01:30)
+V	310904020131Z		02	unknown	/C=US/ST=CA/O=Open vSwitch/OU=Open vSwitch certifier/CN=tests/pki/test id:21c52d3f-1512-44b3-86e6-ec7805e06718
+V	310904020131Z		03	unknown	/C=US/ST=CA/O=Open vSwitch/OU=Open vSwitch certifier/CN=tests/pki/test2 id:c6879d43-7f7e-4e26-8e8c-780d15569343
