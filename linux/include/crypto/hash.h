@@ -209,8 +209,8 @@ struct crypto_ahash {
 };
 
 struct crypto_shash {
-	unsigned int descsize;
-	struct crypto_tfm base;
+	unsigned int descsize;// The size of the context descriptor structure 
+	struct crypto_tfm base;//context descriptor structure
 };
 
 /**

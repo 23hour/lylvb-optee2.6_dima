@@ -16,14 +16,14 @@
 
 static int dima_measurement_mode = 0;
 
-static struct crypto_shash *dima_shash_tfm;
+static struct crypto_shash *dima_shash_tfm;//context descriptor structure and its size
 
 /* need to achieve   */
 int dima_init_crypto(void) 
 {
     long rc;
     
-    dima_shash_tfm = crypto_alloc_shash(dima_hash, 0, 0);
+    dima_shash_tfm = crypto_alloc_shash(dima_hash, 0, 0);//sm3
     if (IS_ERR(dima_shash_tfm)) {
         pr_err("Can not allocate dima hash");
     } else {
@@ -121,7 +121,7 @@ static int cmp_dima_list(pid_t pid, const char* name, int mode, const char* comm
 	INIT_LIST_HEAD(&a->dimas);
 	list_add_tail_rcu(&a->dimas, &dima_list);
 
-	printk("The Process Name Mathc Fail!!!");
+	printk("The Process Name Mathc Fail!!!");/**/
 	printListNumber();
 	printk("Insert New Node !!!");
 
@@ -159,7 +159,12 @@ void get_ebp(void)
 static int dima_calc_buffer_hash(char * data, unsigned long len, u8 *digest)
 {
 	struct {
-		struct shash_desc shash;
+		/*
+		tfm: a pointer to the underlying shash algorithm's transform object
+		flags: a set of flags that control the behavior of the shash algorithm, such as whether to use hardware acceleration
+		ctx: a pointer to the context data structure used to store the state of the shash algorithm during the hash computation
+		*/
+		struct shash_desc shash; //tfm, flags, ctx
 		char ctx[crypto_shash_descsize(dima_shash_tfm)];
 	} desc;
 
@@ -209,7 +214,7 @@ static int dima_calc_task_buffer_hash(struct task_struct *tsk, unsigned long ind
 	// desc.shash.tfm = dima_shash_tfm;
 	// desc.shash.flags = 0;
 
-	// rc = crypto_shash_init(&desc.shash);
+	// rc = crypto_shash_init(&desc.shash);    //why not use???
 	// if (rc != 0)
 	// 	return rc;
 	SHA1Schedule ctx;
@@ -232,7 +237,7 @@ static int dima_calc_task_buffer_hash(struct task_struct *tsk, unsigned long ind
 		}
 
 		retval = access_process_vm(tsk,index+offset,rbuf, rlen,0);
-		printk("retval: %d", retval);
+		printk("retval: %d", retval);/**/
 		
 		if (!retval) {
 			pr_err("Can not read process vm \n");
@@ -380,7 +385,7 @@ static int dima_calc_task_code_by_pid(pid_t pid, char* comm, u8* digest)
     /* comm save the process name */
     strncpy(comm, target->comm, TASK_COMM_LEN);
 
-    printk("process name: %s", comm);
+    printk("process name: %s", comm);/**/
 
  out_put:
 	put_task_struct(target);

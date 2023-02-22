@@ -511,7 +511,7 @@ TEEC_Result TEEC_OpenSession(TEEC_Context *ctx, TEEC_Session *session,
     /* 指针赋值 */
 	buf_data.buf_ptr = (uintptr_t)buf;
 	buf_data.buf_len = sizeof(buf);
-
+//23*8 = 184 =56+32*4
 	arg = (struct tee_ioctl_open_session_arg *)buf;//addr type casting
 	arg->num_params = TEEC_CONFIG_PAYLOAD_REF_COUNT;
 	params = (struct tee_ioctl_param *)(arg + 1);

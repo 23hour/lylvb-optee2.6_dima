@@ -53,7 +53,9 @@ struct dima_struct {
 
 extern char *dima_hash;
 extern int dima_hash_digest_size;
-extern struct list_head dima_list;
+
+//内核中维护度量的双向链表
+extern struct list_head dima_list;  /* list of all measurements */
 extern int dima_used_chip;
 
 int dima_init_crypto(void);

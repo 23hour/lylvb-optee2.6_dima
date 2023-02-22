@@ -9,7 +9,7 @@ READELF = $(CROSS_COMPILE)readelf
 OBJS = secStorCaDebug.o
 OBJS += secStorCaHandle.o
 OBJS += secStorCaTest.o
-OBJS += assess.o
+OBJS += assess.o #add by lyl
 
 CFLAGS += -I../ta/include -I$(TEEC_EXPORT)/include -I./include
 #Add/link other required libraries here

@@ -714,10 +714,10 @@ struct tee_ta_session *tee_ta_pop_current_session(void)
 TEE_Result tee_ta_get_current_session(struct tee_ta_session **sess)
 {
 	struct tee_ta_session *s = TAILQ_FIRST(&thread_get_tsd()->sess_stack);
-
+	//s=&tqh_first
 	if (!s)
 		return TEE_ERROR_BAD_STATE;
-	*sess = s;
+	*sess = s; 
 	return TEE_SUCCESS;
 }
 

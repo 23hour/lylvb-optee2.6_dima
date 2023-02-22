@@ -30,6 +30,7 @@
 #include "secStorCaDebug.h"
 #include "secStorCaTest.h"
 #include "secStorCaHandle.h"
+#include "assess.h"
 #include "stdio.h"
 
 
@@ -110,10 +111,10 @@ typedef struct _user_msg_info
  *******************************************************************************
 */
 
-CHAR oldFileName[] = "secureFile.txt";
+CHAR oldFileName[] = "secureFile.txt"; //create name=read name
 CHAR newFileName[] = "changeSecureFile.txt";
 
-CHAR readBuf[256] = {0};
+// CHAR readBuf[256] = {0};
 CHAR writeBuf[] = "This is the test data which need be wrote into secure file";
 
 
@@ -150,13 +151,13 @@ int toTA(unsigned char *msg) {
 
 }
 
-
+/*
 int determine(unsigned char *msg) {
     int l_Ret = FAIL;
     UINT32 l_FileLen = 0U;
 
     TF("read operation!\n");
-    /** 2) Read data from secure file */
+    //2) Read data from secure file 
     l_Ret = g_SecStorCa_ReadFile(sizeof(oldFileName), oldFileName, 20, readBuf);
     if(FAIL == l_Ret)
     {
@@ -182,7 +183,7 @@ int determine(unsigned char *msg) {
     
     return 1;
 }
-
+*/
 
 
 
@@ -190,7 +191,7 @@ int func(char *p_pid) {
 
     int skfd;
     int ret;
-    user_msg_info u_info;
+    user_msg_info u_info; // nlmsghdr,umsg
     socklen_t len; //unsigned int
     struct nlmsghdr *nlh = NULL;//消息头
     struct sockaddr_nl saddr, daddr;//源地址、目的地址
@@ -282,7 +283,7 @@ int func(char *p_pid) {
             toTA(u_info.msg);
             flag = 1;
         } else {
-            // 对比
+            // 对比的结果
             int tmp = determine(u_info.msg);
             if (tmp == 0) {
                 kill(pid, SIGTERM);

@@ -9,7 +9,7 @@
 #include "dima.h"
 
 /*------zx------*/
-LIST_HEAD(dima_list);
+LIST_HEAD(dima_list); //pre,next /* list of all measurements */
 /*------zx------*/
 
 static ssize_t dima_show_measurements_count(struct file *filp,
@@ -22,12 +22,21 @@ static ssize_t dima_show_measurements_count(struct file *filp,
 	ssize_t len;
 	
 	rcu_read_lock();
+	//pointer to current, pointer to head, list name
 	list_for_each_entry_rcu(_dima, &dima_list, dimas) {
 		val++;
 	}
 	rcu_read_unlock();
 
 	len = scnprintf(tmpbuf, 10, "%d\n", val);
+	/* 
+	copy data from a kernel buffer to a user-space buffer
+	to:A pointer to the user-space buffer where the data should be copied to
+	count: The maximum number of bytes that can be copied to the user-space buffer
+	ppos: A pointer to the current position in the file, which is updated as data is read.
+	from: A pointer to the kernel buffer where the data should be copied from.
+	available: The number of bytes of data available to be copied from the kernel buffer.
+	*/
 	return simple_read_from_buffer(buf, count, ppos, tmpbuf, len);
 }
 

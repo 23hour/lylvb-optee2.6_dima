@@ -110,7 +110,7 @@ struct tee_ta_ctx {
 };
 
 struct tee_ta_session {
-	TAILQ_ENTRY(tee_ta_session) link; //link:tee_ta_session* next,*prev
+	TAILQ_ENTRY(tee_ta_session) link; //link:struct tee_ta_session* next,*prev
 	TAILQ_ENTRY(tee_ta_session) link_tsd;
 	struct tee_ta_ctx *ctx;	/* TA context */
 	TEE_Identity clnt_id;	/* Identify of client */

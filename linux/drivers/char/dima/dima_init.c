@@ -45,7 +45,7 @@ static int dima_open(struct inode *nodp, struct file *filp)
 static long dima_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 {
     int ret;
-    void __user *argp = (void __user *) arg;
+    void __user *argp = (void __user *) arg; //char modulename[100]= "dima,pid"
 
 
 
